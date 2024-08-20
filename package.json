@@ -2,7 +2,7 @@
   "name": "datablogged",
   "version": "1.0.0",
   "description": "DatabasedGirl's Blog",
-  "main": "server/server.ts",
+  "main": "server/server.js",
   "author": "DatabasedGirl",
   "license": "MIT",
   "dependencies": {
