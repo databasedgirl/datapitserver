@@ -33,6 +33,9 @@ router.post('*.html',(req:Request,res:Response)=>{
 router.post('/',(req:Request,res:Response)=>{
     res.json({previews:posts.GetBlog_Static('all')});
 })
+router.get('/ping',(req:Request,res:Response)=>{
+    res.send('pong!');
+})
 router.post('/posts',(req:Request,res:Response)=>{
     res.json({previews:posts.GetBlog_Static('posts')});
 })
