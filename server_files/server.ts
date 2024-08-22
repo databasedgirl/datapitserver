@@ -15,7 +15,6 @@ const handler = new Handlers();
 const header = new Headers(); 
 const posts = new Posts(); 
 
-posts.Watch();
 
 /* SERVER USES */
 server.use(router);
@@ -29,19 +28,19 @@ router.use(header.cors_ACAO);
 
 router.post('*.html',(req:Request,res:Response)=>{
     res.header('location','/')
-})
+});
 router.post('/',(req:Request,res:Response)=>{
     res.json({previews:posts.GetBlog_Static('all')});
-})
+});
 router.get('/ping',(req:Request,res:Response)=>{
     res.send('pong!');
-})
+});
 router.post('/posts',(req:Request,res:Response)=>{
     res.json({previews:posts.GetBlog_Static('posts')});
-})
+});
 router.post('/guides',(req:Request,res:Response)=>{
     res.json({previews:posts.GetBlog_Static('guides')});
-})
+});
 router.post('/p/:blog',(req:Request,res:Response)=>{
     let param:string|undefined = sanitize(req.params.blog);
     if(param == '' || typeof(param) == "undefined"){
@@ -56,7 +55,7 @@ router.post('/p/:blog',(req:Request,res:Response)=>{
         return;
     }
     res.json({blog:blog_response});
-})
+});
 
 router.post('/g/:blog',(req:Request,res:Response)=>{
     let param:string|undefined = sanitize(req.params.blog);
@@ -68,14 +67,30 @@ router.post('/g/:blog',(req:Request,res:Response)=>{
     }
     let blog_response:object|number|undefined = posts.GetBlog(param,"guides");
     if(blog_response == 0 || typeof(blog_response) == "undefined"){
-        
         res.status(404);
         res.json({"404": "The resource you are looking for could not be found."});
         return;
     }
     res.json({blog:blog_response});
-})
+});
 
+
+router.get('/new/:code/:key',async(req:Request,res:Response)=>{
+    let new_post:string|undefined = sanitize(req.params.code);
+    let key:string|undefined = req.params.key;
+    if(new_post == '' || typeof(new_post) == "undefined" || key == '' || typeof(key) == "undefined" ){
+        res.status(404);
+        res.json({"404": "The resource you are looking for could not be found."});
+        return;
+    }
+    let fetch_new = await posts.Auth(new_post,key);
+    if(fetch_new == 0 || typeof(fetch_new) == "undefined"){
+        res.status(404);
+        res.json({"404": "The resource you are looking for could not be found."});
+        return;
+    }
+    
+});
 
 router.post("/ping", (req: Request, res: Response) => {
     console.log(`[+] Website Bumped at ${get_date()}!`);
