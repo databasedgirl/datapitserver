@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import { Router, Request, Response } from "express";
 import dotenv from "dotenv"; 
+import path from "path";
 
 import { Headers } from "./functions/headers";
 import { Handlers } from "./functions/handlers";
@@ -32,6 +33,10 @@ router.post('*.html',(req:Request,res:Response)=>{
 router.post('/',(req:Request,res:Response)=>{
     res.json({previews:posts.GetBlog_Static('all')});
 });
+router.get('/feed.json',(req:Request,res:Response)=>{
+    res.status(200);
+    res.sendFile(path.resolve('feed.json'));
+})
 router.get('/ping',(req:Request,res:Response)=>{
     res.send('pong!');
 });
@@ -54,6 +59,7 @@ router.post('/p/:blog',(req:Request,res:Response)=>{
         res.json({"404": "The resource you are looking for could not be found."});
         return;
     }
+    res.status(200);
     res.json({blog:blog_response});
 });
 
@@ -71,6 +77,7 @@ router.post('/g/:blog',(req:Request,res:Response)=>{
         res.json({"404": "The resource you are looking for could not be found."});
         return;
     }
+    res.status(200);
     res.json({blog:blog_response});
 });
 
@@ -83,7 +90,7 @@ router.get('/new/:code/:key',async(req:Request,res:Response)=>{
         res.json({"404": "The resource you are looking for could not be found."});
         return;
     }
-    let fetch_new = await posts.Auth(new_post,key);
+    let fetch_new:number|undefined = await posts.Auth(new_post,key);
     if(fetch_new == 0 || typeof(fetch_new) == "undefined"){
         res.status(404);
         res.json({"404": "The resource you are looking for could not be found."});
