@@ -13,7 +13,7 @@ export async function connect(){
             user:process.env.DB_USER,
             password:process.env.DB_PASS,
             ssl:{
-                ca:fs.readFileSync(__dirname+process.env.CA_FILE)
+                ca:fs.readFileSync(<string>process.env.CA_FILE)
             }
         });
         return conn; 
