@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import dotenv from "dotenv";
 import {connect} from './database';
-import { Connection } from "mysql";
+import { Connection, QueryError } from "mysql2";
 
 dotenv.config();
 export function sanitize(text: string) {
@@ -67,7 +67,10 @@ export function notify(notification:unknown,type:number){
 export class Posts {
   private async useDB(query:string,prepared:string[]=[]){
     try{
-      let conn:Connection = await connect();
+      let conn:Connection|boolean = await connect();
+      if(!conn){
+        return;
+      }
       return new Promise((resolve,rej)=>{
         conn.query(query,prepared,(err,res)=>{
           if(err){
@@ -77,7 +80,7 @@ export class Posts {
             resolve(res); 
           }
         }).on('end',()=>{  
-          conn.end((err)=>{
+          conn.end((err:QueryError)=>{
             if(typeof(err) != "undefined"){
               notify(`DBERR: ${err.stack}\nERRNO: ${err.errno}`,1);
               return false;
@@ -92,6 +95,7 @@ export class Posts {
     
   }
   public async GetBlog(page: string, type: string) {
+    
     let valid_types:Set<string> = new Set(['posts','guides']);
     if(!valid_types.has(type)){
       return 0;
