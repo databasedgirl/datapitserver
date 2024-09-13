@@ -1,7 +1,6 @@
 import { createConnection, Connection} from 'mysql2';
 import dotenv from 'dotenv';
 import { notify } from './functions';
-import fs from 'fs';
 
 dotenv.config();
 export async function connect(){
@@ -13,7 +12,7 @@ export async function connect(){
             user:process.env.DB_USER,
             password:process.env.DB_PASS,
             ssl:{
-                ca:fs.readFileSync(<string>process.env.CA_FILE)
+                ca:process.env.SSL
             }
         });
         return conn; 
