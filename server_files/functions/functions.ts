@@ -77,7 +77,8 @@ export class Posts {
             rej(err);
             return false;
           }else{
-            resolve(res); 
+            resolve(res);
+             
           }
         }).on('end',()=>{  
           conn.end((err:QueryError)=>{
@@ -195,10 +196,18 @@ export class Posts {
     let get_basics:unknown = await this.useDB(get_basics_query);
     let posts:object = {};
     let guides:object = {};
-    let author:string = JSON.parse(JSON.stringify(get_basics))[0]['author'];
-    let title:string = JSON.parse(JSON.stringify(get_basics))[0]['title'];
-    let posts_guides:posts_guides;
+    let author:string;
+    let title:string;
+    try{
+      author = JSON.parse(JSON.stringify(get_basics))[0]['author'];
+      title = JSON.parse(JSON.stringify(get_basics))[0]['title'];
+    }catch(err){
+      notify(`DBERR: ${err.stack}\nERRNO: ${err.errno}`,1);
+      return 0;
+    }
     
+    let posts_guides:posts_guides;
+   
     switch(section){
       case "all":
         get_posts = await this.useDB(get_posts_query);
